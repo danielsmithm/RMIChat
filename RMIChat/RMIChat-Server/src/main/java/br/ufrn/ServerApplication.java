@@ -1,48 +1,67 @@
 package br.ufrn;
 
 import br.ufrn.configuration.RmiConfiguration;
-import br.ufrn.domain.Group;
-import br.ufrn.domain.Message;
 import br.ufrn.domain.User;
-import br.ufrn.exceptions.GroupNotExistsException;
 import br.ufrn.exceptions.UserAlreadyExistsException;
 
-import br.ufrn.repository.GroupRepository;
-import br.ufrn.repository.UserRepository;
-import br.ufrn.service.GroupServiceImpl;
-import br.ufrn.service.MessagePublisher;
-import br.ufrn.service.UsuarioServiceImpl;
-
 import java.net.MalformedURLException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ServerApplication {
 
-    public static void main(String[] args) throws UserAlreadyExistsException, GroupNotExistsException {
+    private static Logger logger = Logger.getLogger(ServerApplication.class.getName());
 
-        try {
-            LocateRegistry.createRegistry(RmiConfiguration.RMI_PORT);
-            ChatFacade chatFacade = createChatFacade();
-            Naming.rebind(RmiConfiguration.URL_CHAT_FACADE, chatFacade);
-        } catch (RemoteException e) {
-            System.out.println("Não foi possível criar a aplicação chat.");
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            System.out.println("Não foi possível criar a aplicação chat.");
-            e.printStackTrace();
+    public static void main(String[] args) throws RemoteException, MalformedURLException, AlreadyBoundException {
+        logger.log(Level.INFO,"Iniciando servidor de chat.");
+
+        ChatFacade chatFacade = bindApplicationFacade();
+
+        User serverUser = registerServerUser(chatFacade);
+        createBroadcastGroup(chatFacade, serverUser);
+
+        logger.log(Level.INFO,"Servidor de chat iniciado com sucesso.");
+    }
+
+    private static void createBroadcastGroup(ChatFacade chatFacade, User serverUser) throws RemoteException {
+        chatFacade.createGroup("Broadcast",serverUser);
+    }
+
+    private static User registerServerUser(ChatFacade chatFacade) throws RemoteException {
+
+        try{
+            logger.info("Registrando usuário do servidor");
+            User activeUser = chatFacade.register("server");
+            logger.info("Usuário do servidor registrado com sucesso.");
+
+            return activeUser;
+        }catch (UserAlreadyExistsException e) {
+            logger.log(Level.SEVERE,"Não foi possível criar o usuario do servidor. A aplicação abortou.");
+            throw new RuntimeException(e);
         }
 
     }
 
-    private static ChatFacade createChatFacade() {
-        UsuarioServiceImpl usuarioService = new UsuarioServiceImpl(new UserRepository());
-        MessagePublisher messagePublisher = new MessagePublisher();
-        GroupServiceImpl groupService = new GroupServiceImpl(new GroupRepository(), messagePublisher);
+    private static ChatFacade bindApplicationFacade() throws RemoteException, MalformedURLException {
+        logger.info("Efetuando o binding da fachada da aplicação.");
 
-        return new ChatFacadeImpl(groupService,messagePublisher,usuarioService);
+        System.setProperty("sun.rmi.registry.registryFilter", "java.**;br.ufrn.**");
+        LocateRegistry.createRegistry(RmiConfiguration.RMI_PORT);
+
+        ChatFacade chatFacade = createChatFacade();
+        Naming.rebind(RmiConfiguration.URL_CHAT_FACADE, chatFacade);
+
+        logger.info("Bind efetuado com sucesso.");
+
+        return chatFacade;
+    }
+
+    private static ChatFacade createChatFacade() throws RemoteException {
+        return new ChatFacadeImpl(RmiConfiguration.RMI_PORT);
     }
 
 }

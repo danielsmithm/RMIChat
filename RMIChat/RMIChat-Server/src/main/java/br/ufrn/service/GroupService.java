@@ -4,6 +4,7 @@ import br.ufrn.domain.Group;
 import br.ufrn.domain.User;
 import br.ufrn.exceptions.GroupNotExistsException;
 
+import java.io.Serializable;
 import java.util.List;
 
 public interface GroupService {

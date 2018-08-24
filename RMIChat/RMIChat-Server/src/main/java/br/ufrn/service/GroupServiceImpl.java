@@ -6,11 +6,13 @@ import br.ufrn.domain.User;
 import br.ufrn.exceptions.GroupNotExistsException;
 
 import br.ufrn.repository.GroupRepository;
+
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class GroupServiceImpl implements GroupService {
+public class GroupServiceImpl implements GroupService,Serializable {
 
     private GroupRepository groupRepository;
     private MessagePublisher messagePublisher;

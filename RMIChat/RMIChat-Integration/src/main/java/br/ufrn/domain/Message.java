@@ -1,8 +1,10 @@
 package br.ufrn.domain;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
-public class Message {
+public class Message implements Serializable {
 
     public String groupId;
     public String userName;
@@ -38,5 +40,21 @@ public class Message {
 
     public Date getSendTime() {
         return sendTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Message message = (Message) o;
+        return Objects.equals(groupId, message.groupId) &&
+                Objects.equals(userName, message.userName) &&
+                Objects.equals(content, message.content) &&
+                Objects.equals(sendTime, message.sendTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(groupId, userName, content, sendTime);
     }
 }

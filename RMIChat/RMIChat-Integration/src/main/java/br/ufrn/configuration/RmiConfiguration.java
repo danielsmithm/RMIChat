@@ -8,7 +8,7 @@ package br.ufrn.configuration;
  */
 public class RmiConfiguration {
 
-	public static final String RMI_HOST = "rmi://localhost";
+	public static final String RMI_HOST = "rmi://10.3.130.141";
 	public static final String URL_CHAT_FACADE = RMI_HOST + "/ComputeEngine";
 	public static final int RMI_PORT = 1099;
 

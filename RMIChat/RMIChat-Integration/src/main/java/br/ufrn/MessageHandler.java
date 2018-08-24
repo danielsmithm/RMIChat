@@ -3,7 +3,11 @@ package br.ufrn;
 import br.ufrn.domain.Message;
 import br.ufrn.domain.User;
 
-public interface MessageHandler {
-    String getUserName();
-    void notifyMessage(Message message);
+import java.io.Serializable;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+
+public interface MessageHandler extends Serializable, Remote{
+    String getUserName() throws RemoteException;
+    void notifyMessage(Message message) throws RemoteException;
 }

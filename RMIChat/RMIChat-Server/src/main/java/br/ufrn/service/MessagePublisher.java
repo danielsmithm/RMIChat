@@ -3,10 +3,15 @@ package br.ufrn.service;
 import br.ufrn.MessageHandler;
 import br.ufrn.domain.Message;
 
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class MessagePublisher {
+public class MessagePublisher implements Serializable{
 
     private Set<MessageHandler> messageHandlers;
 
@@ -16,12 +21,63 @@ public class MessagePublisher {
 
     public void registerMessageHandler(MessageHandler messageHandler){
         this.messageHandlers.add(messageHandler);
+
+        try {
+            getLogger().log(Level.INFO,"Handler registered for user: "+messageHandler.getUserName());
+        } catch (RemoteException e) {
+            handleRemoteException(e);
+        }
+
     }
 
     public void publishMessageCreation(Message message, Set<String> usersToNotify) {
-        messageHandlers.parallelStream()
-                .filter(messageHandler -> usersToNotify.contains(messageHandler.getUserName()))
-                //.filter(messageHandler -> !messageHandler.getUserName().equals(message.getUserName()))
-                .forEach(messageHandler -> messageHandler.notifyMessage(message));
+        CompletableFuture.runAsync(() -> {
+            messageHandlers.parallelStream()
+                    .filter(messageHandler -> usersToNotifyContainsHandlerUser(usersToNotify, messageHandler))
+                    .filter(messageHandler -> handlerUserIsMessageCreator(message, messageHandler))
+                    .forEach(messageHandler -> notifyMessage(message, messageHandler));
+        });
     }
+
+    private boolean usersToNotifyContainsHandlerUser(Set<String> usersToNotify, MessageHandler messageHandler){
+
+        try {
+            return usersToNotify.contains(messageHandler.getUserName());
+        } catch (RemoteException e) {
+            handleRemoteException(e);
+        }
+
+        return false;
+
+    }
+
+    private boolean handlerUserIsMessageCreator(Message message, MessageHandler messageHandler){
+
+        try {
+            return !messageHandler.getUserName().equals(message.getUserName());
+        } catch (RemoteException e) {
+            handleRemoteException(e);
+        }
+
+        return false;
+    }
+
+    private void notifyMessage(Message message, MessageHandler messageHandler){
+
+        try {
+            messageHandler.notifyMessage(message);
+        } catch (RemoteException e) {
+            handleRemoteException(e);
+        }
+
+    }
+
+    private void handleRemoteException(RemoteException e) {
+        getLogger().log(Level.SEVERE,e.getMessage());
+    }
+
+    private Logger getLogger() {
+        return Logger.getLogger(getClass().getName());
+    }
+
 }

@@ -1,6 +1,9 @@
 package br.ufrn.domain;
 
-public class User {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class User implements Serializable {
     private String userName;
 
     private User(String userName) {
@@ -20,6 +23,19 @@ public class User {
     }
 
     public boolean hasUserName(String userName) {
-        return userName.equals(userName);
+        return this.userName.equals(userName);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(userName, user.userName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userName);
     }
 }

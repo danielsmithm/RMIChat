@@ -2,10 +2,11 @@ package br.ufrn.repository;
 
 import br.ufrn.domain.User;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserRepository {
+public class UserRepository implements Serializable {
 
     public Set<User> users;
 
@@ -15,7 +16,7 @@ public class UserRepository {
 
     public boolean existsUserName(String userName){
         return users.stream()
-                .anyMatch(user -> user.hasUserName(userName));
+                .filter(user -> user.hasUserName(userName)).count() != 0;
     }
 
     public void addUser(User user) {

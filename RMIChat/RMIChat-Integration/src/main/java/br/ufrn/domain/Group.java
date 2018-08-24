@@ -1,9 +1,11 @@
 package br.ufrn.domain;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-public class Group{
+public class Group implements Serializable{
    private static int idSequence = 0;
 
    private String id;
@@ -58,5 +60,19 @@ public class Group{
 
     public void addMessage(Message message) {
         messages.add(message);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Group group = (Group) o;
+        return Objects.equals(id, group.id);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
     }
 }

@@ -3,17 +3,22 @@ package br.ufrn.repository;
 import br.ufrn.domain.Group;
 import br.ufrn.domain.Message;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class GroupRepository {
+public class GroupRepository implements Serializable {
 
     private Set<Group> groups;
 
-    public GroupRepository() {
+    private GroupRepository() {
         this.groups = new HashSet<>();
+    }
+
+    public static GroupRepository createGroupRepository() {
+        return new GroupRepository();
     }
 
     public Group findGroupById(String groupId){

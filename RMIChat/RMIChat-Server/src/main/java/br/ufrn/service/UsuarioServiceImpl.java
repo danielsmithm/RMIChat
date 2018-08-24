@@ -5,7 +5,10 @@ import br.ufrn.exceptions.UserAlreadyExistsException;
 
 import br.ufrn.repository.UserRepository;
 
-public class UsuarioServiceImpl implements UserService {
+import java.io.Serializable;
+import java.util.logging.Logger;
+
+public class UsuarioServiceImpl implements UserService,Serializable {
 
     private UserRepository userRepository;
 
