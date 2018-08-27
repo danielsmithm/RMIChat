@@ -1,26 +1,53 @@
 package br.ufrn.consoleapp;
 
 import br.ufrn.ChatFacade;
+import br.ufrn.ClientApplication;
 import br.ufrn.MessageHandler;
+import br.ufrn.configuration.RmiConfiguration;
 import br.ufrn.domain.Group;
 import br.ufrn.domain.User;
 import br.ufrn.exceptions.GroupNotExistsException;
 import br.ufrn.exceptions.UserAlreadyExistsException;
+import br.ufrn.utils.ServiceLocator;
 
 import java.io.Serializable;
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ConsoleChatClient implements Serializable {
 
     private ChatFacade chatFacade;
     private User activeUser;
 
+    public static void main(String[] args) {
+
+        try {
+            ConsoleChatClient consoleChatClient = new ConsoleChatClient(ServiceLocator.lookupFor(RmiConfiguration.URL_CHAT_FACADE));
+
+            consoleChatClient.run();
+
+        } catch (RemoteException e) {
+            handleException(e);
+        } catch (NotBoundException e) {
+            handleException(e);
+        } catch (MalformedURLException e) {
+            handleException(e);
+        }
+
+    }
+
+    private static void handleException(Exception ex) {
+        Logger.getLogger(ClientApplication.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+    }
+
     public ConsoleChatClient(ChatFacade chatFacade) {
         this.chatFacade = chatFacade;
-
     }
 
     public void run() {

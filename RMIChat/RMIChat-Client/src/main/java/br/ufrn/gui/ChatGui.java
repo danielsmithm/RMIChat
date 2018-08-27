@@ -2,6 +2,7 @@ package br.ufrn.gui;
 
 import br.ufrn.ChatFacade;
 import br.ufrn.MessageHandler;
+import br.ufrn.domain.Group;
 import br.ufrn.utils.ServiceLocator;
 import br.ufrn.configuration.RmiConfiguration;
 import br.ufrn.domain.Message;
@@ -19,15 +20,15 @@ import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
-public class ChatGui {
+public class ChatGui extends JFrame{
 
+    private Group group;
     private final ChatFacade chatFacade;
     private final User activeUser;
 
     //TODO: Choose group
     private String activeGroupId = "1";
 
-    private JFrame frame;
     private JPanel chatPannel;
     private JTextArea messageTextArea;
     private JButton sendMessageButton;
@@ -36,38 +37,37 @@ public class ChatGui {
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
         ChatFacade chatFacade = ServiceLocator.lookupFor(RmiConfiguration.URL_CHAT_FACADE);
         User activeUser = registerUser(chatFacade);
+        Group activeGroup = new GroupChooseGui().chooseGroup();
 
-        new ChatGui(activeUser, chatFacade);
+        new ChatGui(activeUser, activeGroup, chatFacade);
     }
 
-    public ChatGui(User activeUser, ChatFacade chatFacade){
+    public ChatGui(User activeUser, Group group, ChatFacade chatFacade){
         this.activeUser = activeUser;
         this.chatFacade = chatFacade;
+        this.group = group;
         initGui();
     }
 
     private void initGui() {
-
-        this.frame = new JFrame();
-
-        this.frame.setLayout(new FlowLayout());
-        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.frame.setSize(800, 480);
-        this.frame.setPreferredSize(this.frame.getSize());
-        this.frame.setTitle("RMIChat");
+        setLayout(new FlowLayout());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(800, 480);
+        setPreferredSize(getSize());
+        setTitle("RMIChat");
 
         JPanel wrapperPannel = new JPanel();
-        wrapperPannel.setPreferredSize(this.frame.getSize());
+        wrapperPannel.setPreferredSize(getSize());
 
         this.chatPannel = createChatPannel();
-        JPanel messageSendPanel = createMessageSenderPannel(this.frame);
+        JPanel messageSendPanel = createMessageSenderPannel();
 
         wrapperPannel.add(this.chatPannel);
         wrapperPannel.add(messageSendPanel);
 
-        this.frame.add(wrapperPannel);
-        this.frame.pack();
-        this.frame.setVisible(true);
+        add(wrapperPannel);
+        pack();
+        setVisible(true);
 
         try {
             registerMessageHandler();
@@ -76,7 +76,7 @@ public class ChatGui {
         }
     }
 
-    private JPanel createMessageSenderPannel(Container container) {
+    private JPanel createMessageSenderPannel() {
         JPanel messageSendPanel = new JPanel();
         messageSendPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
@@ -129,7 +129,6 @@ public class ChatGui {
 
         return chatPannel;
     }
-
 
     private static User registerUser(ChatFacade chatFacade) throws RemoteException {
         User activeUser;
