@@ -17,7 +17,7 @@ public class GroupServiceImpl implements GroupService,Serializable {
     private GroupRepository groupRepository;
     private MessagePublisher messagePublisher;
 
-    public GroupServiceImpl(GroupRepository groupRepository, MessagePublisher messagePublisher) {
+    protected GroupServiceImpl(GroupRepository groupRepository, MessagePublisher messagePublisher) {
         this.groupRepository = groupRepository;
         this.messagePublisher = messagePublisher;
     }
@@ -31,8 +31,14 @@ public class GroupServiceImpl implements GroupService,Serializable {
     }
 
     @Override
-    public Group findGroupById(String groupId){
-        return groupRepository.findGroupById(groupId);
+    public Group findGroupById(String groupId) throws GroupNotExistsException {
+        Group group = groupRepository.findGroupById(groupId);
+
+        if(group == null){
+            throw new GroupNotExistsException("The group not exists.");
+        }
+
+        return group;
     }
 
     @Override
@@ -66,7 +72,7 @@ public class GroupServiceImpl implements GroupService,Serializable {
             throw new GroupNotExistsException("The group not exists.");
         }
 
-        Message message = Message.createMessage(groupId,username,messageContent);
+        Message message = Message.createMessage(groupId,groupToSendMessage.getName(),username,messageContent);
 
         groupToSendMessage.addMessage(message);
 

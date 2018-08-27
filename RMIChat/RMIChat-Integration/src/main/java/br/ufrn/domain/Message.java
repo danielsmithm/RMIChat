@@ -7,19 +7,21 @@ import java.util.Objects;
 public class Message implements Serializable {
 
     public String groupId;
-    public String userName;
+    public String groupName;
+    public String authorUserName;
     public String content;
     public Date sendTime;
 
-    private Message(String groupId, String userName, String content) {
+    private Message(String groupId, String groupName, String authorUserName, String content) {
         this.groupId = groupId;
-        this.userName = userName;
+        this.groupName = groupName;
+        this.authorUserName = authorUserName;
         this.content = content;
         this.sendTime = new Date();
     }
 
-    public static Message createMessage(String groupId, String userName, String content) {
-        return new Message(groupId, userName, content);
+    public static Message createMessage(String groupId, String groupName, String userName, String content) {
+        return new Message(groupId, groupName, userName, content);
     }
 
     public boolean fromUser(String userName) {
@@ -30,8 +32,8 @@ public class Message implements Serializable {
         return groupId;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getAuthorUserName() {
+        return authorUserName;
     }
 
     public String getContent() {
@@ -42,19 +44,23 @@ public class Message implements Serializable {
         return sendTime;
     }
 
+    public String getGroupName() {
+        return groupName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Message message = (Message) o;
         return Objects.equals(groupId, message.groupId) &&
-                Objects.equals(userName, message.userName) &&
+                Objects.equals(authorUserName, message.authorUserName) &&
                 Objects.equals(content, message.content) &&
                 Objects.equals(sendTime, message.sendTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(groupId, userName, content, sendTime);
+        return Objects.hash(groupId, authorUserName, content, sendTime);
     }
 }

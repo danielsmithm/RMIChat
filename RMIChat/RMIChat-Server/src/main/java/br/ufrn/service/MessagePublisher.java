@@ -13,9 +13,11 @@ import java.util.logging.Logger;
 
 public class MessagePublisher implements Serializable{
 
+    public static final boolean ALLOW_NOTIFY_MESSAGE_CREATOR = true;
+
     private Set<MessageHandler> messageHandlers;
 
-    public MessagePublisher() {
+    protected MessagePublisher() {
         this.messageHandlers = new HashSet<>();
     }
 
@@ -34,7 +36,7 @@ public class MessagePublisher implements Serializable{
         CompletableFuture.runAsync(() -> {
             messageHandlers.parallelStream()
                     .filter(messageHandler -> usersToNotifyContainsHandlerUser(usersToNotify, messageHandler))
-                    .filter(messageHandler -> handlerUserIsMessageCreator(message, messageHandler))
+                    .filter(messageHandler -> allowNotifyMessageCreator() || handlerUserIsNotMessageCreator(message, messageHandler))
                     .forEach(messageHandler -> notifyMessage(message, messageHandler));
         });
     }
@@ -51,10 +53,10 @@ public class MessagePublisher implements Serializable{
 
     }
 
-    private boolean handlerUserIsMessageCreator(Message message, MessageHandler messageHandler){
+    private boolean handlerUserIsNotMessageCreator(Message message, MessageHandler messageHandler){
 
         try {
-            return !messageHandler.getUserName().equals(message.getUserName());
+            return !messageHandler.getUserName().equals(message.getAuthorUserName());
         } catch (RemoteException e) {
             handleRemoteException(e);
         }
@@ -70,6 +72,10 @@ public class MessagePublisher implements Serializable{
             handleRemoteException(e);
         }
 
+    }
+
+    private static boolean allowNotifyMessageCreator(){
+        return ALLOW_NOTIFY_MESSAGE_CREATOR;
     }
 
     private void handleRemoteException(RemoteException e) {

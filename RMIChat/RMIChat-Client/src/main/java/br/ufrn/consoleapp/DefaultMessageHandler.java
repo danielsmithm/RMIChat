@@ -1,15 +1,19 @@
-package br.ufrn;
+package br.ufrn.consoleapp;
 
+import br.ufrn.MessageHandler;
 import br.ufrn.domain.Message;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+/**
+ * Message handler padrão para console application.
+ */
 public class DefaultMessageHandler extends UnicastRemoteObject implements MessageHandler {
 
     private String userName;
 
-    protected DefaultMessageHandler(String userName) throws RemoteException {
+    public DefaultMessageHandler(String userName) throws RemoteException {
         super();
         this.userName = userName;
     }
@@ -21,7 +25,9 @@ public class DefaultMessageHandler extends UnicastRemoteObject implements Messag
 
     @Override
     public void notifyMessage(Message message) throws RemoteException {
-        System.out.println(String.format("%s - %s: %s ", message.getGroupId(), message.getUserName(),message.getContent()));
+        if(!userName.equals(message.getAuthorUserName())) {
+            System.out.println(String.format("%s - %s: %s ", message.getGroupName(), message.getAuthorUserName(), message.getContent()));
+        }
     }
 
 }

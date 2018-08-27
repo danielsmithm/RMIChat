@@ -10,7 +10,7 @@ import java.util.List;
 public interface GroupService {
     void createGroup(String name, User creator);
 
-    Group findGroupById(String groupId);
+    Group findGroupById(String groupId) throws GroupNotExistsException;
 
     void joinGroup(String groupId, User user) throws GroupNotExistsException;
 

@@ -1,14 +1,13 @@
 package br.ufrn;
 
 import br.ufrn.configuration.RmiConfiguration;
-import br.ufrn.domain.User;
-import br.ufrn.exceptions.UserAlreadyExistsException;
 
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.server.ExportException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,31 +16,13 @@ public class ServerApplication {
     private static Logger logger = Logger.getLogger(ServerApplication.class.getName());
 
     public static void main(String[] args) throws RemoteException, MalformedURLException, AlreadyBoundException {
-        logger.log(Level.INFO,"Iniciando servidor de chat.");
 
-        ChatFacade chatFacade = bindApplicationFacade();
-
-        User serverUser = registerServerUser(chatFacade);
-        createBroadcastGroup(chatFacade, serverUser);
-
-        logger.log(Level.INFO,"Servidor de chat iniciado com sucesso.");
-    }
-
-    private static void createBroadcastGroup(ChatFacade chatFacade, User serverUser) throws RemoteException {
-        chatFacade.createGroup("Broadcast",serverUser);
-    }
-
-    private static User registerServerUser(ChatFacade chatFacade) throws RemoteException {
-
-        try{
-            logger.info("Registrando usuário do servidor");
-            User activeUser = chatFacade.register("server");
-            logger.info("Usuário do servidor registrado com sucesso.");
-
-            return activeUser;
-        }catch (UserAlreadyExistsException e) {
-            logger.log(Level.SEVERE,"Não foi possível criar o usuario do servidor. A aplicação abortou.");
-            throw new RuntimeException(e);
+        try {
+            logger.log(Level.INFO,"Iniciando servidor de chat.");
+            ChatFacade chatFacade = bindApplicationFacade();
+            logger.log(Level.INFO,"Servidor de chat iniciado com sucesso.");
+        }catch (ExportException ex){
+            logger.log(Level.SEVERE,ex.getMessage(),ex);
         }
 
     }

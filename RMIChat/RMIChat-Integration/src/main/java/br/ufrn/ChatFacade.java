@@ -14,7 +14,7 @@ public interface ChatFacade extends Remote, Serializable {
 
     void createGroup(String name, User creator) throws RemoteException;
 
-    Group findGroupById(String groupId) throws RemoteException;
+    Group findGroupById(String groupId) throws RemoteException, GroupNotExistsException;
 
     void joinGroup(String groupId, User user) throws RemoteException, GroupNotExistsException;
 

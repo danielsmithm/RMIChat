@@ -1,4 +1,4 @@
-package br.ufrn;
+package br.ufrn.utils;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;

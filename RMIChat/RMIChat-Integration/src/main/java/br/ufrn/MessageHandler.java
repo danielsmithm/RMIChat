@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface MessageHandler extends Serializable, Remote{
+public interface MessageHandler extends Remote, Serializable {
     String getUserName() throws RemoteException;
     void notifyMessage(Message message) throws RemoteException;
 }

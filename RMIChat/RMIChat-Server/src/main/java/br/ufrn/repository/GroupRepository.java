@@ -6,6 +6,7 @@ import br.ufrn.domain.Message;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,10 +23,16 @@ public class GroupRepository implements Serializable {
     }
 
     public Group findGroupById(String groupId){
-        return groups.stream()
+        Optional<Group> first = groups.stream()
                 .filter(group -> group.getId().equals(groupId))
-                .findFirst()
-                .get();
+                .findFirst();
+
+        if(first.isPresent()){
+            return first.get();
+        }
+
+        //If the element don't exists
+        return null;
     }
 
     public void add(Group group){

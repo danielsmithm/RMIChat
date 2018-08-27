@@ -1,19 +1,33 @@
-package br.ufrn.factory;
+package br.ufrn.service;
 
 import br.ufrn.repository.GroupRepository;
 import br.ufrn.repository.UserRepository;
-import br.ufrn.service.*;
 
+/**
+ * Classe Fábrica para os serviços necessários na aplicação.
+ * Para garantir a instanciação externamente por meio da fábrica, os construtores das classes deve possuir o modificador de acesso protected.
+ */
 public class ServiceFactory {
 
     private static ServiceFactory instance = new ServiceFactory();
 
-    private final UsuarioServiceImpl usuarioService;
+    /**
+     * Instância única da aplicação para o serviço de usuários.
+     */
+    private final UserServiceImpl userService;
+
+    /**
+     * Instância única da aplicação para o publicador de mensagens.
+     */
     private final MessagePublisher messagePublisher;
+
+    /**
+     * Instância única da aplicação para o serviço de grupos.
+     */
     private final GroupServiceImpl groupService;
 
     public ServiceFactory(){
-        this.usuarioService = new UsuarioServiceImpl(new UserRepository());
+        this.userService = new UserServiceImpl(new UserRepository());
         this.messagePublisher = new MessagePublisher();
         this.groupService = new GroupServiceImpl(GroupRepository.createGroupRepository(), messagePublisher);
     }
@@ -22,8 +36,8 @@ public class ServiceFactory {
         return instance;
     }
 
-    public UsuarioServiceImpl getUserService() {
-        return usuarioService;
+    public UserServiceImpl getUserService() {
+        return userService;
     }
 
     public MessagePublisher getMessagePublisher() {
