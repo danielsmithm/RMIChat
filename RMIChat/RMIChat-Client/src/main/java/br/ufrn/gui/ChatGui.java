@@ -182,7 +182,7 @@ public class ChatGui {
                 formatedMessage = String.format("(%s) %s - %s",dateInHoursMinutesFormat,message.getAuthorUserName(),message.getContent());
             }
 
-            model.addElement(message.getContent());
+            model.addElement(formatedMessage);
         }
 
         private boolean isServerMesssage(Message message){
