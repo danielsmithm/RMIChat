@@ -40,7 +40,7 @@ public class GroupChooseGui extends JFrame {
         wrapperPannel.setPreferredSize(getSize());
 
         JButton createChatButton = new JButton();
-        createChatButton.setText("Quit chat");
+        createChatButton.setText("Create group");
         createChatButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
