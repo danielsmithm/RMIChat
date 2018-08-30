@@ -1,7 +1,6 @@
 package br.ufrn.consoleapp;
 
 import br.ufrn.ChatFacade;
-import br.ufrn.ClientApplication;
 import br.ufrn.MessageHandler;
 import br.ufrn.configuration.RmiConfiguration;
 import br.ufrn.domain.Group;
@@ -43,7 +42,7 @@ public class ConsoleChatClient implements Serializable {
     }
 
     private static void handleException(Exception ex) {
-        Logger.getLogger(ClientApplication.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        Logger.getLogger(ConsoleChatClient.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
     }
 
     public ConsoleChatClient(ChatFacade chatFacade) {

@@ -28,7 +28,7 @@ public class ServiceFactory {
 
     public ServiceFactory(){
         this.userService = new UserServiceImpl(new UserRepository());
-        this.messagePublisher = new MessagePublisher();
+        this.messagePublisher = new MessagePublisherImpl();
         this.groupService = new GroupServiceImpl(GroupRepository.createGroupRepository(), messagePublisher);
     }
 

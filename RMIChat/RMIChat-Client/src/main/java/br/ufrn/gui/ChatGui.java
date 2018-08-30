@@ -13,6 +13,8 @@ import br.ufrn.exceptions.UserAlreadyExistsException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -26,20 +28,27 @@ public class ChatGui extends JFrame{
     private final ChatFacade chatFacade;
     private final User activeUser;
 
-    //TODO: Choose group
-    private String activeGroupId = "1";
-
     private JPanel chatPannel;
     private JTextArea messageTextArea;
     private JButton sendMessageButton;
     private JList<String> messageList;
 
-    public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
-        ChatFacade chatFacade = ServiceLocator.lookupFor(RmiConfiguration.URL_CHAT_FACADE);
-        User activeUser = registerUser(chatFacade);
-        Group activeGroup = new GroupChooseGui().chooseGroup();
+    public static void main(String[] args) {
 
-        new ChatGui(activeUser, activeGroup, chatFacade);
+        try {
+            ChatFacade chatFacade = ServiceLocator.lookupFor(RmiConfiguration.URL_CHAT_FACADE);
+
+            User activeUser = registerUser(chatFacade);
+
+            new GroupChooseGui(chatFacade,activeUser);
+        } catch (RemoteException e) {
+            JOptionPane.showMessageDialog(null,"Wasn't possible estabilish a connection to server. Try again later.");
+        } catch (NotBoundException e) {
+            JOptionPane.showMessageDialog(null,"A binding for the remote object wasn't found.");
+        } catch (MalformedURLException e) {
+            JOptionPane.showMessageDialog(null,"An configuration error in the application was found and wasn't possible start the app.");
+        }
+
     }
 
     public ChatGui(User activeUser, Group group, ChatFacade chatFacade){
@@ -60,10 +69,9 @@ public class ChatGui extends JFrame{
         wrapperPannel.setPreferredSize(getSize());
 
         this.chatPannel = createChatPannel();
-        JPanel messageSendPanel = createMessageSenderPannel();
 
         wrapperPannel.add(this.chatPannel);
-        wrapperPannel.add(messageSendPanel);
+        wrapperPannel.add(createMessageSenderPannel());
 
         add(wrapperPannel);
         pack();
@@ -78,34 +86,31 @@ public class ChatGui extends JFrame{
 
     private JPanel createMessageSenderPannel() {
         JPanel messageSendPanel = new JPanel();
-        messageSendPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
-        messageSendPanel.setSize(600,140);
+        messageSendPanel.setSize(800,140);
         messageSendPanel.setPreferredSize(messageSendPanel.getSize());
-
-        this.sendMessageButton = new JButton();
-        this.sendMessageButton.setText("Send message");
-        this.sendMessageButton.addActionListener(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                try {
-                    chatFacade.sendMessageToGroup(activeGroupId,activeUser.getUserName(),messageTextArea.getText());
-                } catch (RemoteException e1) {
-                    JOptionPane.showMessageDialog(null,"An communication error ocurred while send the message to server. Try again later.");
-                } catch (GroupNotExistsException e1) {
-                    JOptionPane.showMessageDialog(null, "The corresponding group to this chat message was not found. It may be deleted. ");
-                }
-
-            }
-        });
-
-        messageSendPanel.add(this.sendMessageButton);
 
         this.messageTextArea = new JTextArea();
 
         this.messageTextArea.setSize(480,140);
         this.messageTextArea.setPreferredSize(this.messageTextArea.getSize());
+
+        this.messageTextArea.addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.getKeyCode() == KeyEvent.VK_ENTER){
+                    try {
+                        chatFacade.sendMessageToGroup(group.getId(),activeUser.getUserName(),messageTextArea.getText());
+                        messageTextArea.setText("");
+                    } catch (RemoteException e1) {
+                        JOptionPane.showMessageDialog(null,"An communication error ocurred while send the message to server. Try again later.");
+                    } catch (GroupNotExistsException e1) {
+                        JOptionPane.showMessageDialog(null, "The corresponding group to this chat message was not found. It may be deleted. ");
+                    }
+                }
+            }
+        });
 
         messageSendPanel.add(this.messageTextArea);
 

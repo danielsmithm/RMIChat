@@ -10,13 +10,29 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>RMIChat-Server</artifactId>
+
     <dependencies>
+
         <dependency>
             <groupId>br.ufrn</groupId>
             <artifactId>RMIChat-Integration</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-    </dependencies>
 
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 
 </project>
