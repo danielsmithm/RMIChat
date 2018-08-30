@@ -3,6 +3,7 @@ package br.ufrn.gui;
 import br.ufrn.ChatFacade;
 import br.ufrn.MessageHandler;
 import br.ufrn.domain.Group;
+import br.ufrn.utils.ExceptionHandlingUtils;
 import br.ufrn.utils.ServiceLocator;
 import br.ufrn.configuration.RmiConfiguration;
 import br.ufrn.domain.Message;
@@ -12,6 +13,7 @@ import br.ufrn.exceptions.UserAlreadyExistsException;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
@@ -42,7 +44,7 @@ public class ChatGui extends JFrame{
 
             User activeUser = registerUser(chatFacade);
 
-            new GroupChooseGui(chatFacade,activeUser);
+            GroupChooseGui.openGroupChooseGui(chatFacade, activeUser);
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(null,"Wasn't possible estabilish a connection to server. Try again later.");
         } catch (NotBoundException e) {
@@ -70,6 +72,27 @@ public class ChatGui extends JFrame{
         JPanel wrapperPannel = new JPanel();
         wrapperPannel.setPreferredSize(getSize());
 
+        JButton quitChatButton = new JButton();
+        quitChatButton.setText("Quit chat");
+        quitChatButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    chatFacade.quitGroup(group.getId(),activeUser);
+                    setVisible(false);
+                    GroupChooseGui.openGroupChooseGui(chatFacade,activeUser);
+                } catch (RemoteException e1) {
+                    ExceptionHandlingUtils.handleRemoteExcetpion();
+                } catch (GroupNotExistsException e1) {
+                    ExceptionHandlingUtils.handleGroupNotExistsException();
+                }
+
+            }
+        });
+
+        wrapperPannel.add(quitChatButton);
+
         this.chatPannel = createChatPannel();
 
         wrapperPannel.add(this.chatPannel);
@@ -82,7 +105,7 @@ public class ChatGui extends JFrame{
         try {
             registerMessageHandler();
         } catch (RemoteException e) {
-            e.printStackTrace();
+            ExceptionHandlingUtils.handleRemoteExcetpion();
         }
     }
 
@@ -106,9 +129,9 @@ public class ChatGui extends JFrame{
                         chatFacade.sendMessageToGroup(group.getId(),activeUser.getUserName(),messageTextArea.getText());
                         messageTextArea.setText("");
                     } catch (RemoteException e1) {
-                        JOptionPane.showMessageDialog(null,"An communication error ocurred while send the message to server. Try again later.");
+                        ExceptionHandlingUtils.handleRemoteExcetpion();
                     } catch (GroupNotExistsException e1) {
-                        JOptionPane.showMessageDialog(null, "The corresponding group to this chat message was not found. It may be deleted. ");
+                        ExceptionHandlingUtils.handleGroupNotExistsException();
                     }
                 }
             }
@@ -183,15 +206,18 @@ public class ChatGui extends JFrame{
         public void notifyMessage(Message message) throws RemoteException {
             DefaultListModel<String> model = (DefaultListModel<String>) messageList.getModel();
 
-            String formatedMessage = null;
-            String dateInHoursMinutesFormat = new SimpleDateFormat("HH:mm").format(message.getSendTime());
-            if(isServerMesssage(message)){
-                formatedMessage = String.format("(%s) %s", dateInHoursMinutesFormat,message.getContent());
-            }else{
-                formatedMessage = String.format("(%s) %s - %s",dateInHoursMinutesFormat,message.getAuthorUserName(),message.getContent());
+            if(message.groupId.equals(group.getId())) {
+                String formatedMessage = null;
+                String dateInHoursMinutesFormat = new SimpleDateFormat("HH:mm").format(message.getSendTime());
+                if (isServerMesssage(message)) {
+                    formatedMessage = String.format("(%s) %s", dateInHoursMinutesFormat, message.getContent());
+                } else {
+                    formatedMessage = String.format("(%s) %s - %s", dateInHoursMinutesFormat, message.getAuthorUserName(), message.getContent());
+                }
+
+                model.addElement(formatedMessage);
             }
 
-            model.addElement(formatedMessage);
         }
 
         private boolean isServerMesssage(Message message){

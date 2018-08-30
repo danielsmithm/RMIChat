@@ -63,4 +63,11 @@ public interface GroupService {
      * @return
      */
     List<Group> listGroups(String username);
+
+    /**
+     * Lista todos os grupos existentes.
+     *
+     * @return
+     */
+    List<Group> listGroups();
 }

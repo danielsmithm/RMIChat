@@ -94,4 +94,9 @@ public class GroupServiceImpl implements GroupService,Serializable {
     public List<Group> listGroups(String username) {
         return groupRepository.findGroupsByUser(username);
     }
+
+    @Override
+    public List<Group> listGroups() {
+        return  groupRepository.findAll();
+    }
 }

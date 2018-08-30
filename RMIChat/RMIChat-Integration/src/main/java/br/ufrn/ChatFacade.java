@@ -88,4 +88,13 @@ public interface ChatFacade extends Remote, Serializable {
      * @throws RemoteException
      */
     void registerMessageHandler(MessageHandler handler) throws RemoteException;
+
+    /**
+     * Lista todos os grupos existentes.
+     *
+     * @return
+     * @throws RemoteException
+     */
+    List<Group> listGroups() throws RemoteException;
+
 }

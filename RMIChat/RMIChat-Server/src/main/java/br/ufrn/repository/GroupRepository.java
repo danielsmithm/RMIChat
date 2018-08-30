@@ -86,4 +86,12 @@ public class GroupRepository implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retorna todos os grupos existentes.
+     *
+     * @return
+     */
+    public List<Group> findAll() {
+        return groups.stream().collect(Collectors.toList());
+    }
 }

@@ -100,7 +100,7 @@ public class ChatFacadeImpl extends UnicastRemoteObject implements ChatFacade {
     @Override
     public void joinGroup(String groupId, User user) throws RemoteException, GroupNotExistsException {
         groupService.joinGroup(groupId, user);
-        groupService.sendMessageToGroup(groupId,serverUser.getUserName(),String.format("%s entrou no grupo.",user.getUserName()));
+        groupService.sendMessageToGroup(groupId,serverUser.getUserName(),String.format("%s joined the group.",user.getUserName()));
     }
 
     /**
@@ -114,6 +114,7 @@ public class ChatFacadeImpl extends UnicastRemoteObject implements ChatFacade {
     @Override
     public void quitGroup(String groupId, User user) throws RemoteException, GroupNotExistsException {
         groupService.quitGroup(groupId,user);
+        groupService.sendMessageToGroup(groupId,serverUser.getUserName(),String.format("%s left.",user.getUserName()));
     }
 
     /**
@@ -164,6 +165,11 @@ public class ChatFacadeImpl extends UnicastRemoteObject implements ChatFacade {
     @Override
     public void registerMessageHandler(MessageHandler handler) throws RemoteException {
         messagePublisher.registerMessageHandler(handler);
+    }
+
+    @Override
+    public List<Group> listGroups() throws RemoteException {
+        return groupService.listGroups();
     }
 
     /**

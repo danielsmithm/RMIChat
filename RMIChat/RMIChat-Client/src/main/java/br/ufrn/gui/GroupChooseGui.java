@@ -3,6 +3,7 @@ package br.ufrn.gui;
 import br.ufrn.ChatFacade;
 import br.ufrn.domain.Group;
 import br.ufrn.domain.User;
+import br.ufrn.utils.ExceptionHandlingUtils;
 
 import javax.swing.*;
 
@@ -18,7 +19,7 @@ public class GroupChooseGui extends JFrame {
 
     private final User activeUser;
     private final ChatFacade chatFacade;
-    private List<Group> userGroups;
+    private List<Group> existentGroups;
 
     private JList<Group> messageList;
     private JButton groupChooseButton;
@@ -27,7 +28,7 @@ public class GroupChooseGui extends JFrame {
         this.activeUser = activeUser;
         this.chatFacade = chatFacade;
 
-        loadUserGroupsId(chatFacade, activeUser);
+        loadGroups(chatFacade, activeUser);
 
         setLayout(new FlowLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -38,6 +39,31 @@ public class GroupChooseGui extends JFrame {
         JPanel wrapperPannel = new JPanel();
         wrapperPannel.setPreferredSize(getSize());
 
+        JButton createChatButton = new JButton();
+        createChatButton.setText("Quit chat");
+        createChatButton.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    String groupName = JOptionPane.showInputDialog("Enter a group name.");
+
+                    if(groupName != null){
+                        setVisible(false);
+                        chatFacade.createGroup(groupName,activeUser);
+                        GroupChooseGui.openGroupChooseGui(chatFacade,activeUser);
+                    }else{
+                        JOptionPane.showMessageDialog(null,"Insert a valid group name.");
+                    }
+
+                } catch (RemoteException e1) {
+                    ExceptionHandlingUtils.handleRemoteExcetpion();
+                }
+
+            }
+        });
+
+        wrapperPannel.add(createChatButton);
         wrapperPannel.add(createGuiChoosePanel());
         wrapperPannel.add(createChooseGroupButtonPannel());
 
@@ -46,8 +72,12 @@ public class GroupChooseGui extends JFrame {
         setVisible(true);
     }
 
-    private void loadUserGroupsId(ChatFacade chatFacade, User activeUser) throws RemoteException {
-        this.userGroups = chatFacade.listGroups(activeUser.getUserName());
+    static void openGroupChooseGui(ChatFacade chatFacade, User activeUser) throws RemoteException {
+        new GroupChooseGui(chatFacade,activeUser);
+    }
+
+    private void loadGroups(ChatFacade chatFacade, User activeUser) throws RemoteException {
+        this.existentGroups = chatFacade.listGroups();
     }
 
     private Component createGuiChoosePanel() {
@@ -62,7 +92,7 @@ public class GroupChooseGui extends JFrame {
 
         final DefaultListModel<Group> model = new DefaultListModel<>();
 
-        userGroups.forEach(group -> model.addElement(group));
+        existentGroups.forEach(group -> model.addElement(group));
 
         this.messageList.setModel(model);
 
