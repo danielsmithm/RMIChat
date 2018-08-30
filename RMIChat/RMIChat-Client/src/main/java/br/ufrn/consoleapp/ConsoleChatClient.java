@@ -19,6 +19,9 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Implementação de um chat em console.
+ */
 public class ConsoleChatClient implements Serializable {
 
     private ChatFacade chatFacade;
@@ -27,7 +30,7 @@ public class ConsoleChatClient implements Serializable {
     public static void main(String[] args) {
 
         try {
-            ConsoleChatClient consoleChatClient = new ConsoleChatClient(ServiceLocator.lookupFor(RmiConfiguration.URL_CHAT_FACADE));
+            ConsoleChatClient consoleChatClient = new ConsoleChatClient(ServiceLocator.lookupForRmiObject(RmiConfiguration.URL_CHAT_FACADE));
 
             consoleChatClient.run();
 

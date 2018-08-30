@@ -6,10 +6,29 @@ import java.util.Objects;
 
 public class Message implements Serializable {
 
+    /**
+     * Id do grupo.
+     */
     public String groupId;
+
+    /**
+     * Nome do grupo para o qual a mensagem foi enviada.
+     */
     public String groupName;
+
+    /**
+     * Username do autor da mensagem.
+     */
     public String authorUserName;
+
+    /**
+     * Conteúdo da mensagem.
+     */
     public String content;
+
+    /**
+     * Hora do instante que a mensagem foi enviada.
+     */
     public Date sendTime;
 
     private Message(String groupId, String groupName, String authorUserName, String content) {

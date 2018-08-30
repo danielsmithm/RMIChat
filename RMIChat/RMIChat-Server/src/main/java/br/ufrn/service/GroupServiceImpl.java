@@ -12,6 +12,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Implementação para o serviço de grupo.
+ *
+ * @see br.ufrn.service.GroupService
+ */
 public class GroupServiceImpl implements GroupService,Serializable {
 
     private GroupRepository groupRepository;

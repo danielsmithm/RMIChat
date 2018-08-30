@@ -11,6 +11,9 @@ import java.rmi.server.ExportException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Classe príncipal do servidor de chat.
+ */
 public class ServerApplication {
 
     private static Logger logger = Logger.getLogger(ServerApplication.class.getName());
@@ -27,6 +30,13 @@ public class ServerApplication {
 
     }
 
+    /**
+     * Efetua o binding da fachada de aplicação no RMI registry.
+     *
+     * @return
+     * @throws RemoteException
+     * @throws MalformedURLException
+     */
     private static ChatFacade bindApplicationFacade() throws RemoteException, MalformedURLException {
         logger.info("Efetuando o binding da fachada da aplicação.");
 
@@ -41,6 +51,12 @@ public class ServerApplication {
         return chatFacade;
     }
 
+    /**
+     * Método fábrica da fachada de aplicação.
+     *
+     * @return
+     * @throws RemoteException
+     */
     private static ChatFacade createChatFacade() throws RemoteException {
         return new ChatFacadeImpl(RmiConfiguration.RMI_PORT);
     }

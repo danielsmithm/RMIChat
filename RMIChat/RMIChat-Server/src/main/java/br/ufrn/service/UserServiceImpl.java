@@ -8,6 +8,11 @@ import br.ufrn.repository.UserRepository;
 import java.io.Serializable;
 import java.util.logging.Logger;
 
+/**
+ * Serviço para cadastro de usuários.
+ *
+ * @see br.ufrn.service.UserService
+ */
 public class UserServiceImpl implements UserService,Serializable {
 
     private UserRepository userRepository;

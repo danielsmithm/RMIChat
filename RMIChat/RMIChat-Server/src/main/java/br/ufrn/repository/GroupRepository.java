@@ -12,16 +12,29 @@ import java.util.stream.Collectors;
 
 public class GroupRepository implements Serializable {
 
+    /**
+     * Armazena os grupos do repositório.
+     */
     private Set<Group> groups;
 
     private GroupRepository() {
         this.groups = new HashSet<>();
     }
 
+    /**
+     * Metodo fábrica estático para o repositório de grupo.
+     *
+     * @return
+     */
     public static GroupRepository createGroupRepository() {
         return new GroupRepository();
     }
 
+    /**
+     * Retorna um grupo pelo seu id.
+     * @param groupId
+     * @return
+     */
     public Group findGroupById(String groupId){
         Optional<Group> first = groups.stream()
                 .filter(group -> group.getId().equals(groupId))
@@ -35,10 +48,21 @@ public class GroupRepository implements Serializable {
         return null;
     }
 
+    /**
+     * Adiciona um grupo ao repositório.
+     *
+     * @param group
+     */
     public void add(Group group){
         this.groups.add(group);
     }
 
+    /**
+     * Retorna todas as mensagens que o usuário recebeu.
+     *
+     * @param userName
+     * @return
+     */
     public List<Message> findMessagesByUser(String userName){
 
         return groups.stream()
@@ -49,6 +73,12 @@ public class GroupRepository implements Serializable {
 
     }
 
+    /**
+     * Retorna todos os grupos que o usuário está associado.
+     *
+     * @param userName
+     * @return
+     */
     public List<Group> findGroupsByUser(String userName){
 
         return groups.stream()

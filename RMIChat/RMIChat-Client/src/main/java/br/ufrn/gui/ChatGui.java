@@ -12,7 +12,6 @@ import br.ufrn.exceptions.UserAlreadyExistsException;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
@@ -22,6 +21,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
+/**
+ * Implementação da GUI do chat.
+ */
 public class ChatGui extends JFrame{
 
     private Group group;
@@ -36,7 +38,7 @@ public class ChatGui extends JFrame{
     public static void main(String[] args) {
 
         try {
-            ChatFacade chatFacade = ServiceLocator.lookupFor(RmiConfiguration.URL_CHAT_FACADE);
+            ChatFacade chatFacade = ServiceLocator.lookupForRmiObject(RmiConfiguration.URL_CHAT_FACADE);
 
             User activeUser = registerUser(chatFacade);
 
@@ -163,6 +165,9 @@ public class ChatGui extends JFrame{
         chatFacade.registerMessageHandler(handler);
     }
 
+    /**
+     * Message handler específico para interface de usuário.
+     */
     private class GUIMessageHandler extends UnicastRemoteObject implements MessageHandler{
 
         protected GUIMessageHandler() throws RemoteException {

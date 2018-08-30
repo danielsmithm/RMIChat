@@ -11,6 +11,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Implementação do publisher de mensagens.
+ * <br>
+ *
+ * @see br.ufrn.service.MessagePublisher
+ */
 public class MessagePublisherImpl implements Serializable, MessagePublisher {
 
     public static final boolean ALLOW_NOTIFY_MESSAGE_CREATOR = true;

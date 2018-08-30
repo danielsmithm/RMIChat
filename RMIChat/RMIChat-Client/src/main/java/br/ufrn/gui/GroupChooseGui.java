@@ -11,6 +11,9 @@ import java.awt.event.ActionEvent;
 import java.rmi.RemoteException;
 import java.util.List;
 
+/**
+ * Implementação da GUI de escolha do grupo.
+ */
 public class GroupChooseGui extends JFrame {
 
     private final User activeUser;

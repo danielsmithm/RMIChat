@@ -3,6 +3,9 @@ package br.ufrn.domain;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * Classe que representa um usuário do sistema.
+ */
 public class User implements Serializable {
     private String userName;
 
@@ -10,6 +13,13 @@ public class User implements Serializable {
         this.userName = userName;
     }
 
+    /**
+     * Método fábrica estático para usuário.
+     *
+     * @param userName
+     * @return
+     * @throws IllegalArgumentException
+     */
     public static User createUser(String userName) throws IllegalArgumentException{
         if(userName == null || userName.isEmpty()){
             throw new IllegalArgumentException("The username is required.");
